@@ -9,6 +9,19 @@ const GameBoard = (
 
         const logTest = () => console.log(gameBoard);
         let player = 0;
+
+        function playerSymbol(nr) {
+            let symbol;
+            if (nr === 0) {
+                symbol = "X";
+            } else if (nr === 1) {
+                symbol = "O";
+            } else {
+                alert("Error");
+            }
+            return symbol;
+        }
+
         const move = (index) => {
 
             if (gameBoard.at(index) === 1 ||
@@ -33,7 +46,6 @@ const GameBoard = (
         };
 
         const checkWin = () => {
-
             let won = false;
             for (let i = 0; i < 9; i += 3) {
                 if (gameBoard.at(i) === gameBoard.at(i + 1) &&
@@ -41,7 +53,7 @@ const GameBoard = (
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 1) != null &&
                     gameBoard.at(i + 2) != null) {
-                    console.log("You win");
+                    console.log(playerSymbol(gameBoard.at(i))+ " wins!");
                 }
             }
             for (let i = 0; i < 3; i++) {
@@ -50,7 +62,7 @@ const GameBoard = (
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 3) != null &&
                     gameBoard.at(i + 6) != null) {
-                    console.log("You win");
+                    console.log(playerSymbol(gameBoard.at(i))+" wins!");
                 }
             }
             if (won === false && gameBoard.at(0) != null &&
@@ -62,31 +74,9 @@ const GameBoard = (
                 gameBoard.at(6) != null &&
                 gameBoard.at(7) != null &&
                 gameBoard.at(8) != null) {
-                console.log("tie")
+                console.log("That's a tie");
             }
-
-            /* if (gameBoard.at(i) === gameBoard.at(i + 3) &&
-                 gameBoard.at(i) === gameBoard.at(i + 6) &&
-                 gameBoard.at(i) != null &&
-                 gameBoard.at(i + 3) != null &&
-                 gameBoard.at(i + 6) != null) {
-                 console.log("You win");
-             } else if (gameBoard.at(0) != null &&
-                 gameBoard.at(1) != null &&
-                 gameBoard.at(2) != null &&
-                 gameBoard.at(3) != null &&
-                 gameBoard.at(4) != null &&
-                 gameBoard.at(5) != null &&
-                 gameBoard.at(6) != null &&
-                 gameBoard.at(7) != null &&
-                 gameBoard.at(8) != null) { console.log("tie") }
- 
- */
-
-
         }
-
-
         return { logTest, move, checkWin };
     }
 )();
