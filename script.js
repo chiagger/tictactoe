@@ -1,11 +1,13 @@
 const cells = document.querySelectorAll(".cell");
+const startBtn = document.getElementById("startgame");
+const rules = document.getElementById("rules");
+const restart = document.getElementById("restart");
+const resultContainer = document.getElementById("result");
 
 
 const GameBoard = (
     () => {
         let gameBoard = Array.apply(null, Array(9)).map(function () { });
-
-        const logTest = () => console.log(gameBoard);
 
         let player = Math.round(Math.random());
 
@@ -21,6 +23,16 @@ const GameBoard = (
             return symbol;
         }
 
+        function winMessage(nr) {
+            rules.style.visibility = "hidden";
+            const result = document.createElement('div');
+            result.textContent = "Player \"" + playerSymbol(nr) + "\" wins!";
+            if (resultContainer.hasChildNodes()) {
+                resultContainer.removeChild(resultContainer.firstChild);
+            } 
+            resultContainer.appendChild(result);
+            restart.style.visibility = "visible";
+        }
 
         const whoStarts = document.getElementById("rules");
         whoStarts.textContent = "Player \"" + playerSymbol(player) + "\" starts.";
@@ -48,25 +60,54 @@ const GameBoard = (
             }
         };
 
+        const reset = (i) => {
+            for (let i = 0; i < 9; i++) {
+                gameBoard.splice(i, 1, null);
+            }
+        }
+
         const checkWin = () => {
             let won = false;
             for (let i = 0; i < 9; i += 3) {
-                if (gameBoard.at(i) === gameBoard.at(i + 1) &&
+                if (won===false && gameBoard.at(i) === gameBoard.at(i + 1) &&
                     gameBoard.at(i) === gameBoard.at(i + 2) &&
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 1) != null &&
                     gameBoard.at(i + 2) != null) {
-                    console.log(playerSymbol(gameBoard.at(i)) + " wins!");
+                    resultContainer.style.visibility = "visible";
+                    won=true;
+                    winMessage(gameBoard.at(i));
+
                 }
             }
             for (let i = 0; i < 3; i++) {
-                if (gameBoard.at(i) === gameBoard.at(i + 3) &&
+                if (won===false && gameBoard.at(i) === gameBoard.at(i + 3) &&
                     gameBoard.at(i) === gameBoard.at(i + 6) &&
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 3) != null &&
                     gameBoard.at(i + 6) != null) {
-                    console.log(playerSymbol(gameBoard.at(i)) + " wins!");
+                    resultContainer.style.visibility = "visible";
+                    won=true;
+                    winMessage(gameBoard.at(i));
                 }
+            }
+            if (won===false && gameBoard.at(0) === gameBoard.at(4) &&
+                gameBoard.at(0) === gameBoard.at(8) &&
+                gameBoard.at(0) != null &&
+                gameBoard.at(4) != null &&
+                gameBoard.at(8) != null) {
+                resultContainer.style.visibility = "visible";
+                won=true;
+                winMessage(gameBoard.at(0));
+            }
+            if (won===false && gameBoard.at(2) === gameBoard.at(4) &&
+                gameBoard.at(2) === gameBoard.at(6) &&
+                gameBoard.at(2) != null &&
+                gameBoard.at(4) != null &&
+                gameBoard.at(6) != null) {
+                resultContainer.style.visibility = "visible";
+                won=true;
+                winMessage(gameBoard.at(2));
             }
             if (won === false && gameBoard.at(0) != null &&
                 gameBoard.at(1) != null &&
@@ -77,10 +118,18 @@ const GameBoard = (
                 gameBoard.at(6) != null &&
                 gameBoard.at(7) != null &&
                 gameBoard.at(8) != null) {
-                console.log("That's a tie");
+                rules.style.visibility = "hidden";
+                const result = document.createElement('div');
+                result.textContent = "That's a Tie!";
+                if (resultContainer.hasChildNodes()) {
+                    resultContainer.removeChild(resultContainer.firstChild);
+                } 
+                resultContainer.appendChild(result);
+                resultContainer.style.visibility = "visible";
+                restart.style.visibility = "visible";
             }
         }
-        return { logTest, move, checkWin };
+        return { move, checkWin, reset };
     }
 )();
 
@@ -91,13 +140,30 @@ function game() {
     });
 }
 
-const startBtn = document.getElementById("startgame");
-const rules = document.getElementById("rules");
-rules.style.visibility="hidden";
-startBtn.addEventListener("click", ()=>{game(); startBtn.style.visibility="hidden";
-rules.style.visibility="visible";
+restart.style.visibility = "hidden";
+rules.style.visibility = "hidden";
+startBtn.addEventListener("click", () => {
+    game();
+    startBtn.style.visibility = "hidden";
+    rules.style.visibility = "visible";
 }
 );
+
+restart.addEventListener("click", () => {
+    while (resultContainer.hasChildNodes()) {
+        resultContainer.removeChild(resultContainer.firstChild);
+
+    }
+    restart.style.visibility = "hidden";
+    rules.style.visibility = "hidden";
+    cells.forEach(cell => {
+        cell.textContent = "";
+    });
+    GameBoard.reset();
+    game();
+    startBtn.style.visibility = "hidden";
+    rules.style.visibility = "visible";
+});
 
 
 
