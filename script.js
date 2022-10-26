@@ -3,12 +3,11 @@ const cells = document.querySelectorAll(".cell");
 
 const GameBoard = (
     () => {
-
         let gameBoard = Array.apply(null, Array(9)).map(function () { });
-        //checkWin() checks if a player has won
 
         const logTest = () => console.log(gameBoard);
-        let player = 0;
+
+        let player = Math.round(Math.random());
 
         function playerSymbol(nr) {
             let symbol;
@@ -22,27 +21,31 @@ const GameBoard = (
             return symbol;
         }
 
-        const move = (index) => {
 
+        const whoStarts = document.getElementById("rules");
+        whoStarts.textContent = "Player \"" + playerSymbol(player) + "\" starts.";
+
+        function oppositePlayer(nr) {
+            let player;
+            if (nr === 0) {
+                player = 1;
+            } else if (nr === 1) {
+                player = 0;
+            } else {
+                alert("Error");
+            }
+            return player;
+        }
+
+        const move = (index) => {
             if (gameBoard.at(index) === 1 ||
                 gameBoard.at(index) === 0) {
-                //non fare niente
+                //Can't change spot that's already taken
             } else {
                 gameBoard.splice(index, 1, player);
-                //update html
-                if (player === 0) {
-                    cells.item(index).textContent = "X";
-                    player = 1;
-                } else if (player === 1) {
-                    cells.item(index).textContent = "O";
-                    player = 0;
-                } else {
-                    alert("playernr incorrect");
-                }
-
+                cells.item(index).textContent = playerSymbol(player);
+                player = oppositePlayer(player);
             }
-
-
         };
 
         const checkWin = () => {
@@ -53,7 +56,7 @@ const GameBoard = (
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 1) != null &&
                     gameBoard.at(i + 2) != null) {
-                    console.log(playerSymbol(gameBoard.at(i))+ " wins!");
+                    console.log(playerSymbol(gameBoard.at(i)) + " wins!");
                 }
             }
             for (let i = 0; i < 3; i++) {
@@ -62,7 +65,7 @@ const GameBoard = (
                     gameBoard.at(i) != null &&
                     gameBoard.at(i + 3) != null &&
                     gameBoard.at(i + 6) != null) {
-                    console.log(playerSymbol(gameBoard.at(i))+" wins!");
+                    console.log(playerSymbol(gameBoard.at(i)) + " wins!");
                 }
             }
             if (won === false && gameBoard.at(0) != null &&
@@ -81,11 +84,22 @@ const GameBoard = (
     }
 )();
 
+function game() {
+    cells.forEach((cell, i) => {
+        cell.addEventListener('click', () => { GameBoard.move(i); GameBoard.checkWin(); });
 
-cells.forEach((cell, i) => {
-    cell.addEventListener('click', () => { GameBoard.move(i); GameBoard.checkWin(); });
+    });
+}
 
-});
+const startBtn = document.getElementById("startgame");
+const rules = document.getElementById("rules");
+rules.style.visibility="hidden";
+startBtn.addEventListener("click", ()=>{game(); startBtn.style.visibility="hidden";
+rules.style.visibility="visible";
+}
+);
+
+
 
 
 
